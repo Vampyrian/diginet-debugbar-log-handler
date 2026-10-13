@@ -20,7 +20,7 @@ $logger->info('pdo::execute', [
 ### How to log controller method to context
 ```php
 $logger->info('controller', [
-    'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/Home/HomeController.php&line=50',
+    'link' => 'phpstorm://open?file=/Erp/Controller/Home/HomeController.php&line=50',
 ]);
 ```
 
@@ -38,7 +38,7 @@ $logger->info('controller', [
             },
             {
                 type: 'controller',
-                link: 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/Home/HomeController.php&line=50',
+                link: 'phpstorm://open?file=/Erp/Controller/Home/HomeController.php&line=50',
             }
         ];
 </script>
