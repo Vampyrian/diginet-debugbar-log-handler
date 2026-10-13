@@ -43,3 +43,14 @@ $logger->info('controller', [
         ];
 </script>
 ```
+
+### How to put logs before closing body tag
+```php
+$handler = new DiginetDebugHandler();
+$log = new Logger('name');
+$log->pushHandler($handler);
+
+// ... app runs, logs queries and controller ...
+
+echo $handler->inject($html); // inserts <script>const data = [...]</script> before </body>
+```
