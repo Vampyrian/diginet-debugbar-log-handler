@@ -14,7 +14,9 @@ class DiginetDebugHandler extends AbstractProcessingHandler
 
     protected function write(LogRecord $record): void
     {
-        static::$records[] = $record;
+        if (str_starts_with($record->message, 'pdo::execute') || str_starts_with($record->message, 'controller')) {
+            static::$records[] = $record;
+        }
     }
 
     /**
