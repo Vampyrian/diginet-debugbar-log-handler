@@ -21,5 +21,8 @@
         "psr-4": {
             "Vampyrian\\DiginetDebugbar\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
