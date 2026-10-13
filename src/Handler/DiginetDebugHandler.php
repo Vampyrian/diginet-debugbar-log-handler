@@ -10,8 +10,11 @@ use Monolog\LogRecord;
 
 class DiginetDebugHandler extends AbstractProcessingHandler
 {
+    /** @var LogRecord[] */
+    protected static array $records = [];
+
     protected function write(LogRecord $record): void
     {
-        // TODO: Implement write() method.
+
     }
 }
