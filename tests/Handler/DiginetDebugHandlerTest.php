@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Vampyrian\DiginetDebugbar\Tests\Handler;
 
 use Monolog\Logger;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Vampyrian\DiginetDebugbar\Handler\DiginetDebugHandler;
 
@@ -52,31 +53,93 @@ class DiginetDebugHandlerTest extends TestCase
         ], $this->handler->getData());
     }
 
-    public function testInjectsScriptBeforeClosingBodyTag(): void
+    public function testSendWrapsDataInScriptTagForHtmlResponse(): void
     {
         $this->logger->info('controller', ['link' => 'phpstorm://open?file=/a.php&line=1']);
 
-        $html = $this->handler->inject('<html><body><p>Hi</p></body></html>');
+        $this->expectOutputRegex('~^<script>const data = \[.*"type": "controller".*\];\s*</script>$~s');
 
-        self::assertMatchesRegularExpression(
-            '~<p>Hi</p><script>\s*const data = \[.*"type": "controller".*\];\s*</script>\s*</body></html>$~s',
-            $html,
-        );
+        DiginetDebugHandler::send();
+
+        self::assertSame([], $this->handler->getRecords());
+    }
+
+    public function testSendOutputsPlainJavascriptForJsResponse(): void
+    {
+        $handler = $this->handlerWithFormat('js');
+        $this->logger->info('controller', ['link' => 'phpstorm://open?file=/a.php&line=1']);
+
+        $this->expectOutputRegex('~^const data = \[.*"type": "controller".*\];\s*$~s');
+
+        $handler::send();
+    }
+
+    public function testSendOutputsNothingForUnknownResponse(): void
+    {
+        $handler = $this->handlerWithFormat('unknown');
+        $this->logger->info('controller');
+
+        $this->expectOutputString('');
+
+        $handler::send();
+
+        self::assertCount(1, $this->handler->getRecords());
+    }
+
+    public function testSendOutputsNothingWithoutRecords(): void
+    {
+        $this->expectOutputString('');
+
+        DiginetDebugHandler::send();
     }
 
     public function testEscapesClosingScriptTagInsideData(): void
     {
         $this->logger->info('pdo::execute', ['query' => "SELECT '</script><script>alert(1)'"]);
 
-        $script = $this->handler->render();
+        ob_start();
+        DiginetDebugHandler::send();
+        $script = (string) ob_get_clean();
 
         self::assertSame(1, substr_count($script, '</script>'));
     }
 
-    public function testLeavesHtmlWithoutBodyUntouched(): void
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function contentTypeProvider(): array
     {
-        $this->logger->info('controller');
+        return [
+            'html' => ['Content-Type: text/html; charset=UTF-8', 'html'],
+            'application/javascript' => ['Content-Type: application/javascript', 'js'],
+            'text/javascript' => ['content-type: text/javascript', 'js'],
+            'json' => ['Content-Type: application/json', 'unknown'],
+        ];
+    }
 
-        self::assertSame('{"ok":true}', $this->handler->inject('{"ok":true}'));
+    #[DataProvider('contentTypeProvider')]
+    public function testDetectsResponseFormatFromContentType(string $header, string $expected): void
+    {
+        self::assertSame($expected, $this->handlerWithFormat('html')::formatFromContentType($header));
+    }
+
+    private function handlerWithFormat(string $format): DiginetDebugHandler
+    {
+        $handler = new class extends DiginetDebugHandler {
+            public static string $format = self::FORMAT_HTML;
+
+            protected static function getResponseFormat(): string
+            {
+                return static::$format;
+            }
+
+            public static function formatFromContentType(string $contentType): string
+            {
+                return static::getResponseFormatFromContentType($contentType);
+            }
+        };
+        $handler::$format = $format;
+
+        return $handler;
     }
 }
