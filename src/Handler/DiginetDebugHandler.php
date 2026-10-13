@@ -7,16 +7,92 @@ namespace Vampyrian\DiginetDebugbar\Handler;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\LogRecord;
 
+use function headers_list;
+use function stripos;
+
 class DiginetDebugHandler extends AbstractProcessingHandler
 {
+    protected static bool $initialized = false;
+
     /** @var LogRecord[] */
     protected static array $records = [];
+
+    protected const FORMAT_HTML = 'html';
+    protected const FORMAT_JS = 'js';
+    protected const FORMAT_UNKNOWN = 'unknown';
 
     protected function write(LogRecord $record): void
     {
         if (str_starts_with($record->message, 'pdo::execute') || str_starts_with($record->message, 'controller')) {
             static::$records[] = $record;
         }
+
+        // Register shutdown handler if not already done
+        if (!static::$initialized) {
+            static::$initialized = true;
+            $this->registerShutdownFunction();
+        }
+    }
+
+    protected function registerShutdownFunction(): void
+    {
+        if (PHP_SAPI !== 'cli') {
+            register_shutdown_function(self::send(...));
+        }
+    }
+
+    public static function send(): void
+    {
+        $format = static::getResponseFormat();
+        if ($format === self::FORMAT_UNKNOWN) {
+            return;
+        }
+
+        if (\count(static::$records) > 0) {
+            if ($format === self::FORMAT_HTML) {
+                static::writeOutput('<script>' . self::generateData() . '</script>');
+            } else { // js format
+                static::writeOutput(self::generateData());
+            }
+            static::resetStatic();
+        }
+    }
+
+    public static function resetStatic(): void
+    {
+        static::$records = [];
+    }
+
+    protected static function getResponseFormat(): string
+    {
+        // Check content type
+        foreach (headers_list() as $header) {
+            if (stripos($header, 'content-type:') === 0) {
+                return static::getResponseFormatFromContentType($header);
+            }
+        }
+
+        return self::FORMAT_HTML;
+    }
+
+    protected static function getResponseFormatFromContentType(string $contentType): string
+    {
+        // This handler only works with HTML and javascript outputs
+        // text/javascript is obsolete in favour of application/javascript, but still used
+        if (stripos($contentType, 'application/javascript') !== false || stripos($contentType, 'text/javascript') !== false) {
+            return self::FORMAT_JS;
+        }
+
+        if (stripos($contentType, 'text/html') !== false) {
+            return self::FORMAT_HTML;
+        }
+
+        return self::FORMAT_UNKNOWN;
+    }
+
+    protected static function writeOutput(string $str): void
+    {
+        echo $str;
     }
 
     /**
@@ -32,7 +108,7 @@ class DiginetDebugHandler extends AbstractProcessingHandler
      *
      * @return array<int, array<string, mixed>>
      */
-    public function getData(): array
+    public static function getData(): array
     {
         return array_map(
             static fn (LogRecord $record): array => ['type' => $record->message] + $record->context,
@@ -40,11 +116,11 @@ class DiginetDebugHandler extends AbstractProcessingHandler
         );
     }
 
-    public function render(): string
+    private static function generateData(): string
     {
         // JSON_HEX_* keeps "</script>" or quotes inside queries from breaking out of the script tag
         $json = json_encode(
-            $this->getData(),
+            self::getData(),
             JSON_PRETTY_PRINT
             | JSON_UNESCAPED_SLASHES
             | JSON_UNESCAPED_UNICODE
@@ -55,22 +131,7 @@ class DiginetDebugHandler extends AbstractProcessingHandler
             | JSON_PARTIAL_OUTPUT_ON_ERROR,
         );
 
-        return "<script>\n    const data = {$json};\n</script>\n";
-    }
-
-    /**
-     * Inserts the rendered script right before the last closing body tag.
-     * HTML without a body tag is returned unchanged.
-     */
-    public function inject(string $html): string
-    {
-        $position = strripos($html, '</body>');
-
-        if ($position === false) {
-            return $html;
-        }
-
-        return substr($html, 0, $position) . $this->render() . substr($html, $position);
+        return "const data = {$json};\n";
     }
 
     public function reset(): void
