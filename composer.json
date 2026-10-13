@@ -11,5 +11,15 @@
             "email": "zivinas.macius@gmail.lt"
         }
     ],
-    "require": {}
+    "require": {
+        "monolog/monolog": "^3.12"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^13.4"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vampyrian\\DiginetDebugbar\\Tests\\": "tests/"
+        }
+    }
 }
