@@ -1,0 +1,15 @@
+{
+    "name": "vampyrian/monolog-debugbar",
+    "autoload": {
+        "psr-4": {
+            "Vampyrian\\DiginetDebugbar\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Žilvinas Mačius",
+            "email": "zivinas.macius@gmail.lt"
+        }
+    ],
+    "require": {}
+}
