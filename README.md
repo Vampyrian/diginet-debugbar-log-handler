@@ -6,7 +6,7 @@ $log = new Logger('name');
 $log->pushHandler(new DiginetDebugHandler());
 ```
 
-### How to log query to context
+### How to log query
 ```php
 $logger->info('pdo::execute', [
     'query' => 'SELECT * FROM `user_emails` WHERE `user_id` = 991',
@@ -17,7 +17,7 @@ $logger->info('pdo::execute', [
 ]);
 ```
 
-### How to log controller method to context
+### How to log controller method
 ```php
 $logger->info('controller', [
     'link' => 'phpstorm://open?file=/Erp/Controller/Home/HomeController.php&line=50',
