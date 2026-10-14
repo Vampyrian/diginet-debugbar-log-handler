@@ -1,5 +1,8 @@
 {
     "name": "vampyrian/monolog-debugbar",
+    "version": "0.1.0-alfa",
+    "license": "MIT",
+    "php": "^8.3",
     "autoload": {
         "psr-4": {
             "Vampyrian\\DiginetDebugbar\\": "src/"
@@ -23,6 +26,7 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "./vendor/bin/phpunit tests",
+        "suites": "./vendor/bin/phpunit --list-suites"
     }
 }
