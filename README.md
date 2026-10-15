@@ -26,6 +26,7 @@ $logger->info('pdo::execute', [
 ```php
 $logger->info('controller', [
     'link' => 'phpstorm://open?file=/Erp/Controller/Home/HomeController.php&line=50',
+    "name": "/Erp/Controller/Home/HomeController",
 ]);
 ```
 
