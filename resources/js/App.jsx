@@ -1,29 +1,5 @@
 import { useState } from 'react';
 
-const styles = {
-    bar: {
-        position: 'fixed',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 99999,
-        font: '12px/1.4 ui-monospace, Menlo, monospace',
-        background: '#1e1e1e',
-        color: '#ddd',
-        borderTop: '1px solid #444',
-    },
-    tabs: { display: 'flex', gap: 4, padding: 4 },
-    tab: (active) => ({
-        padding: '4px 10px',
-        border: 0,
-        cursor: 'pointer',
-        font: 'inherit',
-        color: 'inherit',
-        background: active ? '#3a3a3a' : 'transparent',
-    }),
-    panel: { maxHeight: '40vh', overflow: 'auto', padding: 8, borderTop: '1px solid #444' },
-};
-
 export default function App({ records = [] }) {
     const [activeTab, setActiveTab] = useState(null);
 
@@ -38,19 +14,19 @@ export default function App({ records = [] }) {
     const current = tabs.find((t) => t.key === activeTab);
 
     return (
-        <div style={styles.bar}>
+        <div className="fixed inset-x-0 bottom-0 z-[99999] border-t border-neutral-700 bg-neutral-900 font-mono text-xs text-neutral-300">
             {current && (
-                <div style={styles.panel}>
+                <div className="max-h-[40vh] overflow-auto border-b border-neutral-700 p-2">
                     {/* TODO: replace with dedicated panel components */}
                     <pre>{JSON.stringify(current.items, null, 2)}</pre>
                 </div>
             )}
-            <div style={styles.tabs}>
+            <div className="flex gap-1 p-1">
                 {tabs.map((tab) => (
                     <button
                         key={tab.key}
                         type="button"
-                        style={styles.tab(tab.key === activeTab)}
+                        className={`cursor-pointer px-2.5 py-1 hover:bg-neutral-800 ${tab.key === activeTab ? 'bg-neutral-700' : ''}`}
                         onClick={() => setActiveTab(tab.key === activeTab ? null : tab.key)}
                     >
                         {tab.label}

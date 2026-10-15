@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Debugbar Playground</title>
+    <style>
+        body { margin: 0; padding: 24px; font: 14px/1.5 system-ui, sans-serif; }
+    </style>
+</head>
+<body>
+    <h1>Debugbar Playground</h1>
+    <p>A fake host page. Edit <code>playground/data.json</code> to change the records the debugbar receives.</p>
+
+    <script type="module">
+        // Mimics the PHP handler, which prints `const data = [...]` before the bundle loads.
+        import records from './data.json';
+
+        window.data = records;
+
+        await import('/resources/js/main.jsx');
+    </script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+/* Only scan resources/js for class names (not vendor/, public/js/ etc.) */
+@import "tailwindcss" source(none);
+@source "./";
