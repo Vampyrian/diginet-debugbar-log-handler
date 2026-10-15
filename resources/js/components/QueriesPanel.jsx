@@ -46,14 +46,37 @@ export default function QueriesPanel({ queries = [] }) {
 
     const totalDuration = queries.reduce((sum, q) => sum + (q.duration ?? 0), 0);
 
+    // The same query_md5 executed more than once points to an N+1 problem.
+    const md5Counts = {};
+    queries.forEach((q) => {
+        if (q.query_md5) {
+            md5Counts[q.query_md5] = (md5Counts[q.query_md5] ?? 0) + 1;
+        }
+    });
+    const repeatsOf = (query) => md5Counts[query.query_md5] ?? 0;
+    const nPlusOneCount = Object.values(md5Counts).filter((count) => count > 1).length;
+
     return (
         <div>
             <p className="mb-2 text-neutral-500">
                 {queries.length} queries in {formatMs(totalDuration)}
+                {nPlusOneCount > 0 && (
+                    <span className="ml-2 text-amber-400">
+                        · {nPlusOneCount} possible N+1 {nPlusOneCount === 1 ? 'problem' : 'problems'}
+                    </span>
+                )}
             </p>
             <ul className="divide-y divide-neutral-800">
                 {queries.map((query, index) => (
-                    <li key={index} className="flex items-start gap-4 py-1.5">
+                    <li key={index} className={`flex items-start gap-4 py-1.5 ${repeatsOf(query) > 1 ? 'bg-amber-400/5' : ''}`}>
+                        {repeatsOf(query) > 1 && (
+                            <span
+                                className="shrink-0 rounded bg-amber-400/15 px-1.5 text-amber-400"
+                                title={`This query ran ${repeatsOf(query)} times (same query_md5)`}
+                            >
+                                N+1 ×{repeatsOf(query)}
+                            </span>
+                        )}
                         <code className="flex-1 break-all whitespace-pre-wrap text-neutral-200">{query.query}</code>
                         <span className="shrink-0 text-neutral-500">{formatMs(query.duration ?? 0)}</span>
                         <span className="w-12 shrink-0 text-right text-neutral-500">×{query.count ?? 1}</span>
