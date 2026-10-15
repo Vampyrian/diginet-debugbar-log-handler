@@ -1,5 +1,10 @@
 ## Format
 
+### How to install
+```bash
+composer require --dev vampyrian/monolog-debugbar
+```
+
 ### How to instantiate handler
 ```php
 $log = new Logger('name');
@@ -44,7 +49,7 @@ $logger->info('controller', [
 </script>
 ```
 
-### How to put logs before closing body tag
+### How to configure logger
 ```php
 $handler = new DiginetDebugHandler();
 $log = new Logger('name');
