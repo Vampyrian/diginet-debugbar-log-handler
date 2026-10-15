@@ -7,8 +7,8 @@ composer require --dev vampyrian/monolog-debugbar
 
 ### How to instantiate handler
 ```php
-$log = new Logger('name');
-$log->pushHandler(new DiginetDebugHandler());
+$logger = new Logger('name');
+$logger->pushHandler(new DiginetDebugHandler());
 ```
 
 ### How to log query
@@ -47,11 +47,4 @@ $logger->info('controller', [
             }
         ];
 </script>
-```
-
-### How to configure logger
-```php
-$handler = new DiginetDebugHandler();
-$log = new Logger('name');
-$log->pushHandler($handler);
 ```
