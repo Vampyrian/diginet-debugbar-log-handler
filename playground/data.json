@@ -1,7 +1,56 @@
 [
     {
         "type": "controller",
-        "link": "phpstorm://open?file=/Erp/Controller/Home/HomeController.php&line=50"
+        "link": "phpstorm://open?file=/Erp/Controller/Home/HomeController.php&line=50",
+        "name": "/Erp/Controller/Home/HomeController"
+    },
+    {
+        "type": "pdo::execute",
+        "query": "SELECT * FROM `user_emails` WHERE `user_id` = 991",
+        "duration": 0.0002901554107666,
+        "memory": 0.0027084350585938,
+        "count": 1,
+        "query_md5": "aetjhsryjmsrynsryj"
+    },
+    {
+        "type": "pdo::execute",
+        "query": "SELECT `id`, `name` FROM `users` WHERE `id` IN (991, 992, 993)",
+        "duration": 0.0011239051818848,
+        "memory": 0.0041351318359375,
+        "count": 3,
+        "query_md5": "b7f1c2d9e0a4f5b6c7d8e9f0a1b2c3d4"
+    },
+    {
+        "type": "pdo::execute",
+        "query": "UPDATE `sessions` SET `last_seen` = NOW() WHERE `id` = 'abc123'",
+        "duration": 0.0004520416259766,
+        "memory": 0.0009765625,
+        "count": 1,
+        "query_md5": "c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8"
+    },
+    {
+        "type": "pdo::execute",
+        "query": "SELECT * FROM `user_emails` WHERE `user_id` = 991",
+        "duration": 0.0002901554107666,
+        "memory": 0.0027084350585938,
+        "count": 1,
+        "query_md5": "aetjhsryjmsrynsryj"
+    },
+    {
+        "type": "pdo::execute",
+        "query": "SELECT `id`, `name` FROM `users` WHERE `id` IN (991, 992, 993)",
+        "duration": 0.0011239051818848,
+        "memory": 0.0041351318359375,
+        "count": 3,
+        "query_md5": "b7f1c2d9e0a4f5b6c7d8e9f0a1b2c3d4"
+    },
+    {
+        "type": "pdo::execute",
+        "query": "UPDATE `sessions` SET `last_seen` = NOW() WHERE `id` = 'abc123'",
+        "duration": 0.0004520416259766,
+        "memory": 0.0009765625,
+        "count": 1,
+        "query_md5": "c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8"
     },
     {
         "type": "pdo::execute",
