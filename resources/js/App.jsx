@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import ControllerPanel from './components/ControllerPanel.jsx';
+import QueriesPanel from './components/QueriesPanel.jsx';
 
 export default function App({ records = [] }) {
     const [activeTab, setActiveTab] = useState(null);
@@ -7,8 +9,8 @@ export default function App({ records = [] }) {
     const controllers = records.filter((r) => r.type === 'controller');
 
     const tabs = [
-        { key: 'queries', label: `Queries (${queries.length})`, items: queries },
-        { key: 'controller', label: 'Controller', items: controllers },
+        { key: 'queries', label: `Queries (${queries.length})`, panel: <QueriesPanel queries={queries} /> },
+        { key: 'controller', label: 'Controller', panel: <ControllerPanel controllers={controllers} /> },
     ];
 
     const current = tabs.find((t) => t.key === activeTab);
@@ -17,8 +19,7 @@ export default function App({ records = [] }) {
         <div className="fixed inset-x-0 bottom-0 z-[99999] border-t border-neutral-700 bg-neutral-900 font-mono text-xs text-neutral-300">
             {current && (
                 <div className="max-h-[40vh] overflow-auto border-b border-neutral-700 p-2">
-                    {/* TODO: replace with dedicated panel components */}
-                    <pre>{JSON.stringify(current.items, null, 2)}</pre>
+                    {current.panel}
                 </div>
             )}
             <div className="flex gap-1 p-1">
