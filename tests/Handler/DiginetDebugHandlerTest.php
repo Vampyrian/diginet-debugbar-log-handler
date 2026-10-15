@@ -57,7 +57,7 @@ class DiginetDebugHandlerTest extends TestCase
     {
         $this->logger->info('controller', ['link' => 'phpstorm://open?file=/a.php&line=1']);
 
-        $this->expectOutputRegex('~^<script>const data = \[.*"type": "controller".*\];\s*</script>$~s');
+        $this->expectOutputRegex('~^<script type="module">const data = \[.*"type": "controller".*\];\s*\(function\(\).*</script>$~s');
 
         DiginetDebugHandler::send();
 
@@ -102,6 +102,7 @@ class DiginetDebugHandlerTest extends TestCase
         $script = (string) ob_get_clean();
 
         self::assertSame(1, substr_count($script, '</script>'));
+        self::assertStringNotContainsString('</script><script>alert(1)', $script);
     }
 
     /**

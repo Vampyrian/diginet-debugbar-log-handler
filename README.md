@@ -29,9 +29,9 @@ $logger->info('controller', [
 ]);
 ```
 
-### Json output in browser before body tag
+### Output in browser (data + compiled public/js/debugbar.js in one module)
 ```html
-<script>
+<script type="module">
     const data = [
             {
                 type: 'pdo::execute',
@@ -46,5 +46,6 @@ $logger->info('controller', [
                 link: 'phpstorm://open?file=/Erp/Controller/Home/HomeController.php&line=50',
             }
         ];
+    (function(){ /* public/js/debugbar.js */ })();
 </script>
 ```

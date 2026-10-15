@@ -50,7 +50,9 @@ class DiginetDebugHandler extends AbstractProcessingHandler
 
         if (\count(static::$records) > 0) {
             if ($format === self::FORMAT_HTML) {
-                static::writeOutput('<script>' . self::generateData() . '</script>');
+                // One module: `data` stays module-scoped (no global to clash with the host page)
+                // but is still in scope for the bundle that follows it
+                static::writeOutput('<script type="module">' . self::generateData() . self::generateScript() . '</script>');
             } else { // js format
                 static::writeOutput(self::generateData());
             }
@@ -132,6 +134,25 @@ class DiginetDebugHandler extends AbstractProcessingHandler
         );
 
         return "const data = {$json};\n";
+    }
+
+    /**
+     * The compiled React bundle (npm run build), inlined because public/js is not web-accessible from vendor/.
+     */
+    private static function generateScript(): string
+    {
+        $js = @file_get_contents(static::getScriptPath());
+        if ($js === false) {
+            return '';
+        }
+
+        // Never let the bundle close its own script tag early
+        return str_ireplace('</script', '<\\/script', $js);
+    }
+
+    protected static function getScriptPath(): string
+    {
+        return \dirname(__DIR__, 2) . '/public/js/debugbar.js';
     }
 
     public function reset(): void
