@@ -1,14 +1,27 @@
-import { useState } from 'react';
-import ControllerPanel from './components/ControllerPanel.jsx';
-import QueriesPanel from './components/QueriesPanel.jsx';
+import { useState, type ReactNode } from 'react';
+import ControllerPanel from './components/ControllerPanel.tsx';
+import QueriesPanel from './components/QueriesPanel.tsx';
+import type { ControllerRecord, DebugRecord, QueryRecord } from './types.ts';
 
-export default function App({ records = [] }) {
-    const [activeTab, setActiveTab] = useState(null);
+type TabKey = 'queries' | 'controller';
 
-    const queries = records.filter((r) => r.type === 'pdo::execute');
-    const controllers = records.filter((r) => r.type === 'controller');
+interface Tab {
+    key: TabKey;
+    label: string;
+    panel: ReactNode;
+}
 
-    const tabs = [
+interface AppProps {
+    records?: DebugRecord[];
+}
+
+export default function App({ records = [] }: AppProps) {
+    const [activeTab, setActiveTab] = useState<TabKey | null>(null);
+
+    const queries = records.filter((r): r is QueryRecord => r.type === 'pdo::execute');
+    const controllers = records.filter((r): r is ControllerRecord => r.type === 'controller');
+
+    const tabs: Tab[] = [
         { key: 'queries', label: `Queries (${queries.length})`, panel: <QueriesPanel queries={queries} /> },
         { key: 'controller', label: 'Controller', panel: <ControllerPanel controllers={controllers} /> },
     ];

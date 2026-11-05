@@ -13,7 +13,7 @@ export default defineConfig({
         outDir: 'public/js',
         emptyOutDir: true,
         lib: {
-            entry: 'resources/js/main.jsx',
+            entry: 'resources/js/main.tsx',
             name: 'DiginetDebugbar',
             formats: ['iife'],
             fileName: () => 'debugbar.js',

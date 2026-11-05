@@ -1,9 +1,8 @@
 import { createRoot } from 'react-dom/client';
-import App from './App.jsx';
+import App from './App.tsx';
 import css from './app.css?inline';
 
 // The PHP handler prints `const data = [...]` in a <script> tag before this bundle runs.
-// eslint-disable-next-line no-undef
 const records = typeof data !== 'undefined' ? data : [];
 
 const host = document.createElement('div');

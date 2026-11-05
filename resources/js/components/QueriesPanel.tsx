@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
+import type { QueryRecord } from '../types.ts';
 
-const formatMs = (seconds) => `${(seconds * 1000).toFixed(2)} ms`;
+const formatMs = (seconds: number): string => `${(seconds * 1000).toFixed(2)} ms`;
 
 // `memory` is logged in megabytes; small values read better in KB.
-const formatMemory = (megabytes) => (megabytes >= 1 ? `${megabytes.toFixed(2)} MB` : `${(megabytes * 1024).toFixed(2)} KB`);
+const formatMemory = (megabytes: number): string => (megabytes >= 1 ? `${megabytes.toFixed(2)} MB` : `${(megabytes * 1024).toFixed(2)} KB`);
 
 // navigator.clipboard only exists on https/localhost; local dev hosts like http://app.test need the old fallback.
-const copyToClipboard = async (text, container) => {
+const copyToClipboard = async (text: string, container: HTMLElement): Promise<void> => {
     if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);
         return;
@@ -22,11 +23,11 @@ const copyToClipboard = async (text, container) => {
     textarea.remove();
 };
 
-function CopyButton({ text }) {
+function CopyButton({ text }: { text: string }) {
     const [copied, setCopied] = useState(false);
 
-    const handleClick = async (event) => {
-        await copyToClipboard(text, event.currentTarget.parentElement);
+    const handleClick = async (event: MouseEvent<HTMLButtonElement>) => {
+        await copyToClipboard(text, event.currentTarget.parentElement ?? document.body);
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
     };
@@ -42,7 +43,11 @@ function CopyButton({ text }) {
     );
 }
 
-export default function QueriesPanel({ queries = [] }) {
+interface QueriesPanelProps {
+    queries?: QueryRecord[];
+}
+
+export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
     if (queries.length === 0) {
         return <p className="text-neutral-500">No queries.</p>;
     }
@@ -51,13 +56,13 @@ export default function QueriesPanel({ queries = [] }) {
     const totalMemory = queries.reduce((sum, q) => sum + (q.memory ?? 0), 0);
 
     // The same query_md5 executed more than once points to an N+1 problem.
-    const md5Counts = {};
+    const md5Counts: Record<string, number> = {};
     queries.forEach((q) => {
         if (q.query_md5) {
             md5Counts[q.query_md5] = (md5Counts[q.query_md5] ?? 0) + 1;
         }
     });
-    const repeatsOf = (query) => md5Counts[query.query_md5] ?? 0;
+    const repeatsOf = (query: QueryRecord): number => (query.query_md5 ? (md5Counts[query.query_md5] ?? 0) : 0);
     const nPlusOneCount = Object.values(md5Counts).filter((count) => count > 1).length;
 
     return (

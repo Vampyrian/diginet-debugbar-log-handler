@@ -1,5 +1,7 @@
+import type { ControllerRecord } from '../types.ts';
+
 // Turns "phpstorm://open?file=/Erp/Controller/HomeController.php&line=50" into "/Erp/Controller/HomeController.php:50".
-const linkLabel = (link) => {
+const linkLabel = (link: string): string => {
     try {
         const params = new URL(link).searchParams;
         const file = params.get('file');
@@ -10,7 +12,11 @@ const linkLabel = (link) => {
     }
 };
 
-export default function ControllerPanel({ controllers = [] }) {
+interface ControllerPanelProps {
+    controllers?: ControllerRecord[];
+}
+
+export default function ControllerPanel({ controllers = [] }: ControllerPanelProps) {
     if (controllers.length === 0) {
         return <p className="text-neutral-500">No controller.</p>;
     }
