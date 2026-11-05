@@ -1,4 +1,4 @@
-## Format
+# How to use
 
 ### How to install
 ```bash
