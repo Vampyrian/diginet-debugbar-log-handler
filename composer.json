@@ -26,7 +26,10 @@
         }
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit tests",
+        "test": [
+            "npm run typecheck",
+            "./vendor/bin/phpunit tests"
+        ],
         "suites": "./vendor/bin/phpunit --list-suites"
     }
 }
