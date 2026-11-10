@@ -77,7 +77,7 @@ export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
             </p>
             <ul className="divide-y divide-neutral-800">
                 {queries.map((query, index) => (
-                    <li key={index} className={`flex items-start gap-4 py-1.5 ${repeatsOf(query) > 1 ? 'bg-amber-400/5' : ''}`}>
+                    <li key={index} className={`flex items-start gap-4 py-1.5 ${repeatsOf(query) > 1 ? 'bg-amber-400/5 hover:bg-amber-400/20' : 'hover:bg-neutral-700/60'}`}>
                         {repeatsOf(query) > 1 && (
                             <span
                                 className="shrink-0 rounded bg-amber-400/15 px-1.5 text-amber-400"
@@ -91,7 +91,7 @@ export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
                         <span className="w-20 shrink-0 text-right text-neutral-500" title="Memory used by the query">
                             {formatMemory(query.memory ?? 0)}
                         </span>
-                        <span className="w-12 shrink-0 text-right text-neutral-500" title="Downloaded record count">×{query.count ?? 1}</span>
+                        <span className="w-12 shrink-0 text-right text-neutral-500" title="Affected rows count">×{query.count ?? 1}</span>
                         <CopyButton text={query.query} />
                     </li>
                 ))}
