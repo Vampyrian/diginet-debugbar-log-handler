@@ -1,10 +1,11 @@
 import { useState, type ReactNode } from 'react';
 import ControllerPanel from './components/ControllerPanel.tsx';
 import QueriesPanel from './components/QueriesPanel.tsx';
+import SettingsPanel from './components/SettingsPanel.tsx';
 import type { ControllerRecord, DebugRecord, QueryRecord } from './types.ts';
 import {getBooleanFromStorage, setBooleanToStorage} from "./helpers/localStorageHelper.ts";
 
-type TabKey = 'queries' | 'controller';
+type TabKey = 'queries' | 'controller' | 'settings';
 
 const HIDDEN_KEY = 'diginet-debugbar-hidden';
 
@@ -33,6 +34,7 @@ export default function App({ records = [] }: AppProps) {
     const tabs: Tab[] = [
         { key: 'queries', label: `Queries (${queries.length})`, panel: <QueriesPanel queries={queries} /> },
         { key: 'controller', label: 'Controller', panel: <ControllerPanel controllers={controllers} /> },
+        { key: 'settings', label: 'Settings', panel: <SettingsPanel /> },
     ];
 
     const current = tabs.find((t) => t.key === activeTab);
