@@ -4,8 +4,11 @@ import CopyButton from "./ui/CopyButton.tsx";
 
 const formatMs = (seconds: number): string => `${(seconds * 1000).toFixed(2)} ms`;
 
-// `memory` is logged in megabytes; small values read better in KB.
-const formatMemory = (megabytes: number): string => (megabytes >= 1 ? `${megabytes.toFixed(2)} MB` : `${(megabytes * 1024).toFixed(2)} KB`);
+const formatMemory = (megabytes: number): string => (
+    megabytes >= 1
+        ? `${megabytes.toFixed(2)} MB`
+        : `${(megabytes * 1024).toFixed(2)} KB`
+);
 
 type SortKey = 'duration' | 'memory' | 'count';
 type SortDirection = 'asc' | 'desc';
