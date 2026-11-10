@@ -1,4 +1,5 @@
 import type { ControllerRecord } from '../types.ts';
+import {linkReplacer} from "../helpers/linkReplacer.ts";
 
 // Turns "phpstorm://open?file=/Erp/Controller/HomeController.php&line=50" into "/Erp/Controller/HomeController.php:50".
 const linkLabel = (link: string): string => {
@@ -25,8 +26,8 @@ export default function ControllerPanel({ controllers = [] }: ControllerPanelPro
         <ul className="space-y-1">
             {controllers.map((controller, index) => (
                 <li key={index}>
-                    <a href={controller.link} className="text-sky-400 hover:underline">
-                        {linkLabel(controller.link)}
+                    <a href={linkReplacer(controller.link)} className="text-sky-400 hover:underline">
+                        {linkReplacer(linkLabel(controller.link))}
                     </a>
                 </li>
             ))}

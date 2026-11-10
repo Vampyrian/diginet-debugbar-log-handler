@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getStringFromStorage, setStringToStorage } from '../helpers/localStorageHelper.ts';
-
-const LINK_SEARCH_KEY = 'diginet-debugbar-link-search';
-const LINK_REPLACE_KEY = 'diginet-debugbar-link-replace';
+import { LINK_REPLACE_KEY, LINK_SEARCH_KEY, resetLinkReplacerCache } from '../helpers/linkReplacer.ts';
 
 export default function SettingsPanel() {
     const [search, setSearch] = useState<string>(() => getStringFromStorage(LINK_SEARCH_KEY));
@@ -16,6 +14,7 @@ export default function SettingsPanel() {
         return () => {
             setStringToStorage(LINK_SEARCH_KEY, valuesRef.current.search);
             setStringToStorage(LINK_REPLACE_KEY, valuesRef.current.replace);
+            resetLinkReplacerCache();
         };
     }, []);
 
