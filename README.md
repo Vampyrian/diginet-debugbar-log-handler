@@ -87,3 +87,32 @@ npm run typecheck   # TypeScript type check
 npm run build       # type check + build public/js/debugbar.js
 npm run dev         # rebuild public/js/debugbar.js on every change
 ```
+
+## How to prepare new release
+
+Requires `git`, `php`, installed composer/npm dependencies and an authenticated GitHub CLI (`gh auth login`).
+
+1. Run tests (TypeScript type check + PHPUnit):
+   ```bash
+   composer test
+   ```
+2. Build the frontend bundle. `public/js/debugbar.js` is committed to the repository, so the release must contain a fresh build:
+   ```bash
+   npm run build
+   ```
+3. Commit the built `public/js/debugbar.js` (and any other changes) and push to `main`.
+   The release script requires a clean working tree on `main` that is in sync with `origin/main`.
+4. Create the release:
+   ```bash
+   bin/release create patch
+   ```
+   This reads the current version from `composer.json`, bumps it, runs tests again, commits the version change,
+   creates and pushes a `vX.Y.Z` tag and publishes a GitHub release with generated notes.
+
+Other release options:
+```bash
+bin/release create minor              # 0.1.1 -> 0.2.0
+bin/release create major              # 0.2.0 -> 1.0.0
+bin/release list                      # show GitHub releases
+bin/release delete 0.2.0-beta         # delete release + tag
+```
