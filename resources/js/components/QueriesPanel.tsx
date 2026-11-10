@@ -1,53 +1,40 @@
-import { useState, type MouseEvent } from 'react';
+import { useState } from 'react';
 import type { QueryRecord } from '../types.ts';
+import CopyButton from "./ui/CopyButton.tsx";
 
 const formatMs = (seconds: number): string => `${(seconds * 1000).toFixed(2)} ms`;
 
 // `memory` is logged in megabytes; small values read better in KB.
 const formatMemory = (megabytes: number): string => (megabytes >= 1 ? `${megabytes.toFixed(2)} MB` : `${(megabytes * 1024).toFixed(2)} KB`);
 
-// navigator.clipboard only exists on https/localhost; local dev hosts like http://app.test need the old fallback.
-const copyToClipboard = async (text: string, container: HTMLElement): Promise<void> => {
-    if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text);
-        return;
-    }
+type SortKey = 'duration' | 'memory' | 'count';
+type SortDirection = 'asc' | 'desc';
 
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    container.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    textarea.remove();
-};
+const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: 'duration', label: 'Duration' },
+    { key: 'memory', label: 'Memory' },
+    { key: 'count', label: 'Count' },
+];
 
-function CopyButton({ text }: { text: string }) {
-    const [copied, setCopied] = useState(false);
-
-    const handleClick = async (event: MouseEvent<HTMLButtonElement>) => {
-        await copyToClipboard(text, event.currentTarget.parentElement ?? document.body);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-    };
-
-    return (
-        <button
-            type="button"
-            onClick={handleClick}
-            className="w-14 shrink-0 cursor-pointer rounded border border-neutral-700 px-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200"
-        >
-            {copied ? 'Copied' : 'Copy'}
-        </button>
-    );
-}
+const sortValue = (query: QueryRecord, key: SortKey): number => (key === 'count' ? (query.count ?? 1) : (query[key] ?? 0));
 
 interface QueriesPanelProps {
     queries?: QueryRecord[];
 }
 
 export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
+    const [sort, setSort] = useState<{ key: SortKey; direction: SortDirection } | null>(null);
+
+    // Each click cycles: descending -> ascending -> execution order.
+    const toggleSort = (key: SortKey) => {
+        setSort((current) => {
+            if (current?.key !== key) {
+                return { key, direction: 'desc' };
+            }
+            return current.direction === 'desc' ? { key, direction: 'asc' } : null;
+        });
+    };
+
     if (queries.length === 0) {
         return <p className="text-neutral-500">No queries.</p>;
     }
@@ -65,18 +52,47 @@ export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
     const repeatsOf = (query: QueryRecord): number => (query.query_md5 ? (md5Counts[query.query_md5] ?? 0) : 0);
     const nPlusOneCount = Object.values(md5Counts).filter((count) => count > 1).length;
 
+    // Keep the original index as a stable React key across re-sorts.
+    const rows = queries.map((query, index) => ({ query, index }));
+    if (sort) {
+        const factor = sort.direction === 'asc' ? 1 : -1;
+        rows.sort((a, b) => factor * (sortValue(a.query, sort.key) - sortValue(b.query, sort.key)));
+    }
+
     return (
         <div>
-            <p className="mb-2 text-neutral-500">
-                {queries.length} queries in {formatMs(totalDuration)}, {formatMemory(totalMemory)}
-                {nPlusOneCount > 0 && (
-                    <span className="ml-2 text-amber-400">
-                        · {nPlusOneCount} possible N+1 {nPlusOneCount === 1 ? 'problem' : 'problems'}
-                    </span>
-                )}
-            </p>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-neutral-500">
+                    {queries.length} queries in {formatMs(totalDuration)}, {formatMemory(totalMemory)}
+                    {nPlusOneCount > 0 && (
+                        <span className="ml-2 text-amber-400">
+                            · {nPlusOneCount} possible N+1 {nPlusOneCount === 1 ? 'problem' : 'problems'}
+                        </span>
+                    )}
+                </p>
+                <div className="flex items-center gap-1 text-neutral-500">
+                    <span>Sort by:</span>
+                    {SORT_OPTIONS.map(({ key, label }) => {
+                        const active = sort?.key === key;
+                        return (
+                            <button
+                                key={key}
+                                type="button"
+                                onClick={() => toggleSort(key)}
+                                title={active ? 'Click to change direction or reset to execution order' : `Sort by ${label.toLowerCase()}`}
+                                className={`cursor-pointer rounded border px-1.5 ${
+                                    active ? 'border-neutral-500 bg-neutral-800 text-neutral-200' : 'border-neutral-700 hover:bg-neutral-800 hover:text-neutral-200'
+                                }`}
+                            >
+                                {label}
+                                {active && (sort.direction === 'desc' ? ' ↓' : ' ↑')}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
             <ul className="divide-y divide-neutral-800">
-                {queries.map((query, index) => (
+                {rows.map(({ query, index }) => (
                     <li key={index} className={`flex items-start gap-4 py-1.5 ${repeatsOf(query) > 1 ? 'bg-amber-400/5 hover:bg-amber-400/20' : 'hover:bg-neutral-700/60'}`}>
                         {repeatsOf(query) > 1 && (
                             <span
