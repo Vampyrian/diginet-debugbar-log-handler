@@ -20,7 +20,7 @@ export default function SettingsPanel() {
 
     return (
         <form className="flex gap-3" onSubmit={(event) => event.preventDefault()}>
-            <div className="gap-1">
+            <div className="gap-1" title="Search string in file link">
                 <label htmlFor="link-search" className="text-neutral-400">
                     Search string in file link
                 </label>
@@ -33,7 +33,7 @@ export default function SettingsPanel() {
                     className="rounded border border-neutral-700 bg-neutral-900 px-2 py-1 text-neutral-200"
                 />
             </div>
-            <div className="gap-1">
+            <div className="gap-1" title="Replace string in file link">
                 <label htmlFor="link-replace" className="text-neutral-400">
                     Replace with
                 </label>

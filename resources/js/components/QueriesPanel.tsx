@@ -87,11 +87,11 @@ export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
                             </span>
                         )}
                         <code className="flex-1 break-all whitespace-pre-wrap text-neutral-200">{query.query}</code>
-                        <span className="shrink-0 text-neutral-500">{formatMs(query.duration ?? 0)}</span>
+                        <span className="shrink-0 text-neutral-500" title="Query duration">{formatMs(query.duration ?? 0)}</span>
                         <span className="w-20 shrink-0 text-right text-neutral-500" title="Memory used by the query">
                             {formatMemory(query.memory ?? 0)}
                         </span>
-                        <span className="w-12 shrink-0 text-right text-neutral-500">×{query.count ?? 1}</span>
+                        <span className="w-12 shrink-0 text-right text-neutral-500" title="Downloaded record count">×{query.count ?? 1}</span>
                         <CopyButton text={query.query} />
                     </li>
                 ))}
