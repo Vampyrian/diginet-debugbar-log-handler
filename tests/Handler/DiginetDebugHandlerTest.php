@@ -31,9 +31,20 @@ class DiginetDebugHandlerTest extends TestCase
             'memory' => 0.0027084350585938,
             'count' => 1,
             'query_md5' => 'aetjhsryjmsrynsryj',
+            'links' => [
+                [
+                    'name' => '/Erp/Controller/Home/EmailGateway',
+                    'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/Home/HomeController.php&line=50',
+                ],
+                [
+                    'name' => '/Erp/Controller/Home/UserGateway',
+                    'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/UserController.php&line=2050',
+                ],
+            ]
         ]);
         $this->logger->info('controller', [
             'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/Home/HomeController.php&line=50',
+            "name" => "/Erp/Controller/Home/HomeController",
         ]);
 
         self::assertCount(2, $this->handler->getRecords());
@@ -45,10 +56,21 @@ class DiginetDebugHandlerTest extends TestCase
                 'memory' => 0.0027084350585938,
                 'count' => 1,
                 'query_md5' => 'aetjhsryjmsrynsryj',
+                'links' => [
+                    [
+                        'name' => '/Erp/Controller/Home/EmailGateway',
+                        'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/Home/HomeController.php&line=50',
+                    ],
+                    [
+                        'name' => '/Erp/Controller/Home/UserGateway',
+                        'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/UserController.php&line=2050',
+                    ],
+                ]
             ],
             [
                 'type' => 'controller',
                 'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/Home/HomeController.php&line=50',
+                "name" => "/Erp/Controller/Home/HomeController",
             ],
         ], $this->handler->getData());
     }

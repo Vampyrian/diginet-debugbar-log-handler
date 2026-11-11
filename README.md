@@ -21,6 +21,16 @@ $logger->info('pdo::execute', [
     'memory' => 0.0027084350585938,
     'count' => 1,
     'query_md5' => 'aetjhsryjmsrynsryj',
+    'links' => [
+        [
+            'name' => '/Erp/Controller/Home/EmailGateway',
+            'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/Home/HomeController.php&line=50',
+        ],
+        [
+            'name' => '/Erp/Controller/Home/UserGateway',
+            'link' => 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/UserController.php&line=2050',
+        ],
+    ]
 ]);
 ```
 
@@ -43,10 +53,20 @@ $logger->info('controller', [
                 memory: 0.0027084350585938,
                 count: 1,
                 query_md5: 'aetjhsryjmsrynsryj',
-            },
+                links: [
+                    {
+                        name: '/Erp/Controller/Home/EmailGateway',
+                        link: 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/Home/HomeController.php&line=50',
+                    },
+                    {
+                        name: '/Erp/Controller/Home/UserGateway',
+                        link: 'phpstorm://open?file=/home/zilvinas/dev/erp/src/Erp/Controller/UserController.php&line=2050',
+                    }
+                ]
             {
                 type: 'controller',
                 link: 'phpstorm://open?file=/Erp/Controller/Home/HomeController.php&line=50',
+                name: "/Erp/Controller/Home/HomeController",
             }
         ];
     (function(){ /* public/js/debugbar.js */ })();
