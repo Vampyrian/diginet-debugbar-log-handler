@@ -48,7 +48,7 @@ export default function LinksDropdown({ links }: { links: Link[] }) {
             {open && (
                 <ul className="absolute right-0 z-10 mt-1 max-w-[90vw] min-w-3xl space-y-1 rounded border border-neutral-700 bg-neutral-900 p-2 shadow-lg">
                     {links.map((link, index) => (
-                        <li key={index} className="break-all">
+                        <li key={index} className="break-all text-right">
                             <a href={linkReplacer(link.link)} className="text-sky-400 hover:underline">
                                 {link.name}
                             </a>
