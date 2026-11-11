@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { QueryRecord } from '../types.ts';
 import CopyButton from "./ui/CopyButton.tsx";
+import LinksDropdown from "./ui/LinksDropdown.tsx";
 
 const formatMs = (seconds: number): string => `${(seconds * 1000).toFixed(2)} ms`;
 
@@ -42,7 +43,6 @@ export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
         return <p className="text-neutral-500">No queries.</p>;
     }
 
-    const totalDuration = queries.reduce((sum, q) => sum + (q.duration ?? 0), 0);
     const totalMemory = queries.reduce((sum, q) => sum + (q.memory ?? 0), 0);
 
     // The same query_md5 executed more than once points to an N+1 problem.
@@ -66,7 +66,7 @@ export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
         <div>
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
                 <p className="text-neutral-500">
-                    {queries.length} queries in {formatMs(totalDuration)}, {formatMemory(totalMemory)}
+                    {queries.length} queries, {formatMemory(totalMemory)}
                     {nPlusOneCount > 0 && (
                         <span className="ml-2 text-amber-400">
                             · {nPlusOneCount} possible N+1 {nPlusOneCount === 1 ? 'problem' : 'problems'}
@@ -106,6 +106,7 @@ export default function QueriesPanel({ queries = [] }: QueriesPanelProps) {
                             </span>
                         )}
                         <code className="flex-1 break-all whitespace-pre-wrap text-neutral-200">{query.query}</code>
+                        <LinksDropdown links={query.links ?? []} />
                         <span className="shrink-0 text-neutral-500" title="Query duration">{formatMs(query.duration ?? 0)}</span>
                         <span className="w-20 shrink-0 text-right text-neutral-500" title="Memory used by the query">
                             {formatMemory(query.memory ?? 0)}
