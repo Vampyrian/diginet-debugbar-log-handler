@@ -11,7 +11,8 @@ export default function LinksDropdown({ links }: { links: Link[] }) {
             return;
         }
         const handlePointerDown = (event: MouseEvent) => {
-            if (!containerRef.current?.contains(event.target as Node)) {
+            const container = containerRef.current;
+            if (container && !event.composedPath().includes(container)) {
                 setOpen(false);
             }
         };
