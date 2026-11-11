@@ -46,7 +46,7 @@ export default function LinksDropdown({ links }: { links: Link[] }) {
                 ({links.length}) {open ? '▴' : '▾'}
             </button>
             {open && (
-                <ul className="absolute right-0 z-10 mt-1 max-w-5xl min-w-lg space-y-1 rounded border border-neutral-700 bg-neutral-900 p-2 shadow-lg">
+                <ul className="absolute right-0 z-10 mt-1 max-w-[90vw] min-w-3xl space-y-1 rounded border border-neutral-700 bg-neutral-900 p-2 shadow-lg">
                     {links.map((link, index) => (
                         <li key={index} className="break-all">
                             <a href={linkReplacer(link.link)} className="text-sky-400 hover:underline">
