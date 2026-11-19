@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Vampyrian\DiginetDebugbar\Handler;
 
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Level;
 use Monolog\LogRecord;
 
 use function headers_list;
@@ -20,6 +21,32 @@ class DiginetDebugHandler extends AbstractProcessingHandler
     protected const FORMAT_HTML = 'html';
     protected const FORMAT_JS = 'js';
     protected const FORMAT_UNKNOWN = 'unknown';
+
+    /**
+     * @param bool $collectInCli Collect records in CLI too. Off by default: nothing is ever sent in CLI,
+     *                           so long-running console commands would only accumulate records until out of memory
+     */
+    public function __construct(
+        int|string|Level $level = Level::Debug,
+        bool $bubble = true,
+        protected bool $collectInCli = false,
+    ) {
+        parent::__construct($level, $bubble);
+    }
+
+    public function isHandling(LogRecord $record): bool
+    {
+        if (!$this->collectInCli && static::isCli()) {
+            return false;
+        }
+
+        return parent::isHandling($record);
+    }
+
+    protected static function isCli(): bool
+    {
+        return \in_array(PHP_SAPI, ['cli', 'phpdbg'], true);
+    }
 
     protected function write(LogRecord $record): void
     {

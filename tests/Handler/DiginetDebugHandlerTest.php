@@ -16,7 +16,7 @@ class DiginetDebugHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->handler = new DiginetDebugHandler();
+        $this->handler = new DiginetDebugHandler(collectInCli: true);
         $this->handler->reset();
 
         $this->logger = new Logger('test');
@@ -125,6 +125,32 @@ class DiginetDebugHandlerTest extends TestCase
 
         self::assertSame(1, substr_count($script, '</script>'));
         self::assertStringNotContainsString('</script><script>alert(1)', $script);
+    }
+
+    public function testIgnoresRecordsInCliByDefault(): void
+    {
+        $logger = new Logger('cli');
+        $logger->pushHandler($handler = new DiginetDebugHandler());
+
+        $logger->info('pdo::execute', ['query' => 'SELECT 1']);
+
+        self::assertSame([], $handler->getRecords());
+    }
+
+    public function testCollectsRecordsOutsideCli(): void
+    {
+        $handler = new class extends DiginetDebugHandler {
+            protected static function isCli(): bool
+            {
+                return false;
+            }
+        };
+        $logger = new Logger('web');
+        $logger->pushHandler($handler);
+
+        $logger->info('pdo::execute', ['query' => 'SELECT 1']);
+
+        self::assertCount(1, $handler->getRecords());
     }
 
     /**

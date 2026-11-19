@@ -13,6 +13,13 @@ $logger = new Logger('name');
 $logger->pushHandler(new DiginetDebugHandler());
 ```
 
+The handler ignores records in CLI (console commands, workers), because nothing is output there and
+long-running commands would only accumulate records until PHP runs out of memory.
+To collect them anyway (e.g. in tests), pass `collectInCli: true`:
+```php
+$logger->pushHandler(new DiginetDebugHandler(collectInCli: true));
+```
+
 ### How to log query
 ```php
 $logger->info('pdo::execute', [
